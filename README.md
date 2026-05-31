@@ -2,7 +2,7 @@
 
 A full-stack product catalog with a Flask REST API, React UI, PostgreSQL database, and an n8n AI bot integration.
 
-**Live URL:** http://capstone-christina.yourdomain.com
+**Live URL:** http://capstone-christina.pathway4.click
 
 ---
 
