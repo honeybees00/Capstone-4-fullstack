@@ -1,0 +1,105 @@
+{
+  "name": "Product Catalog AI Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "product-bot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "product-bot"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=http://{{ $env.FLASK_HOST || 'localhost' }}:5000/products/",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-0002-0002-000000000002",
+      "name": "Get All Products",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─── Inputs ───────────────────────────────────────────────────────────\nconst webhookBody = $('Webhook').first().json.body || {};\nconst question    = (webhookBody.message || webhookBody.question || '').trim();\nconst products    = $input.first().json;          // array from GET /products/\n\n// Guard: API error\nif (!Array.isArray(products)) {\n  return [{ json: { reply: 'Sorry, I could not reach the product catalog right now.' } }];\n}\n\nconst count = products.length;\nconst q     = question.toLowerCase();\nlet reply   = '';\n\n// ─── Intent: count / total ─────────────────────────────────────────────\nif (!q || q.includes('how many') || q.includes('count') || q.includes('total') || q.includes('number of')) {\n  reply = `We currently have ${count} product${count !== 1 ? 's' : ''} registered in the catalog.`;\n\n// ─── Intent: list / show all ──────────────────────────────────────────\n} else if (q.includes('list') || q.includes('show') || q.includes('all product') || q.includes('catalog')) {\n  if (count === 0) {\n    reply = 'The product catalog is currently empty.';\n  } else {\n    const lines = products\n      .map(p => `• ${p.name} — $${parseFloat(p.price).toFixed(2)} (qty: ${p.quantity})`)\n      .join('\\n');\n    reply = `Here are all ${count} products in the catalog:\\n\\n${lines}`;\n  }\n\n// ─── Intent: price / expensive / cheap ───────────────────────────────\n} else if (q.includes('price') || q.includes('expensive') || q.includes('cheap') || q.includes('cost')) {\n  if (count === 0) {\n    reply = 'The catalog is empty — no pricing data available yet.';\n  } else {\n    const sorted = [...products].sort((a, b) => b.price - a.price);\n    const top    = sorted.slice(0, 5);\n    const lines  = top.map(p => `• ${p.name}: $${parseFloat(p.price).toFixed(2)}`).join('\\n');\n    reply = `Top ${top.length} most expensive product${top.length !== 1 ? 's' : ''}:\\n\\n${lines}`;\n  }\n\n// ─── Intent: stock / inventory / quantity ────────────────────────────\n} else if (q.includes('stock') || q.includes('inventory') || q.includes('quantity') || q.includes('low')) {\n  const lowStock = products.filter(p => p.quantity < 10);\n  if (lowStock.length === 0) {\n    reply = `Great news! All ${count} products are well-stocked (10+ units each).`;\n  } else {\n    const lines = lowStock\n      .map(p => `• ${p.name}: ${p.quantity} unit${p.quantity !== 1 ? 's' : ''} remaining`)\n      .join('\\n');\n    reply = `${lowStock.length} product${lowStock.length > 1 ? 's are' : ' is'} running low on stock:\\n\\n${lines}`;\n  }\n\n// ─── Intent: search by name ───────────────────────────────────────────\n} else if (q.includes('find') || q.includes('search') || q.includes('look for')) {\n  // Extract a search term after 'find/search/look for'\n  const term = q.replace(/(find|search|look for)/g, '').trim();\n  const found = products.filter(p => p.name.toLowerCase().includes(term));\n  if (found.length === 0) {\n    reply = `No products matching \"${term}\" were found in the catalog.`;\n  } else {\n    const lines = found\n      .map(p => `• ${p.name} — $${parseFloat(p.price).toFixed(2)} (qty: ${p.quantity})`)\n      .join('\\n');\n    reply = `Found ${found.length} matching product${found.length !== 1 ? 's' : ''}:\\n\\n${lines}`;\n  }\n\n// ─── Fallback ─────────────────────────────────────────────────────────\n} else {\n  reply = `I'm your product catalog assistant! We have ${count} product${count !== 1 ? 's' : ''} in stock.\\n\\nTry asking me:\\n• \"How many products do we have?\"\\n• \"List all products\"\\n• \"Which products are low on stock?\"\\n• \"Show me the most expensive products\"\\n• \"Find wireless\"  `;\n}\n\nreturn [{ json: { reply, total_products: count } }];"
+      },
+      "id": "a1b2c3d4-0003-0003-0003-000000000003",
+      "name": "Process Query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $json.reply, total_products: $json.total_products }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1b2c3d4-0004-0004-0004-000000000004",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get All Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Products": {
+      "main": [
+        [
+          {
+            "node": "Process Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Query": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
