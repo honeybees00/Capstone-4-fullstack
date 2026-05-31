@@ -1,0 +1,24 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Space Mono', 'Consolas', monospace;
+  background: #070e0e;
+  color: #cce8e4;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+input, textarea {
+  background: #0d1a1a;
+  color: #cce8e4;
+  border: 1.5px solid #1e3232;
+  border-radius: 8px;
+  font-family: 'Space Mono', 'Consolas', monospace;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input::placeholder, textarea::placeholder { color: #234040; }
+input:focus, textarea:focus {
+  border-color: rgba(20, 184, 166, 0.55);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.08);
+}

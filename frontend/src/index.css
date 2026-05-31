@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@layer components {
+  .input-base {
+    @apply w-full rounded-lg border border-border bg-surface px-5 py-3.5
+           font-sans text-sm text-text outline-none transition-all
+           placeholder:text-text-muted;
+  }
+}
+
+.input-base:focus {
+  border-color: rgba(20, 184, 166, 0.55);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.08);
+  caret-color: #14b8a6;
+}
+
+@theme {
+  /* ── Base surfaces ── */
+  --color-base:          #070e0e;
+  --color-surface:       #0d1a1a;
+  --color-surface-card:  #102020;
+  --color-surface-high:  #162828;
+  --color-border:        #1e3232;
+  --color-border-light:  #2a4444;
+
+  /* ── Teal accent (primary) ── */
+  --color-accent:        #14b8a6;
+  --color-accent-dark:   #0f766e;
+  --color-accent-mid:    #5eead4;
+
+  /* ── Sage (secondary) ── */
+  --color-sage:          #7fa87a;
+  --color-sage-dark:     #4d7a48;
+  --color-sage-mid:      #a8c9a3;
+
+  /* ── Text ── */
+  --color-text:          #cce8e4;
+  --color-text-mid:      #5e9e98;
+  --color-text-muted:    #234040;
+
+  --font-serif: 'Orbitron', 'Georgia', serif;
+  --font-sans:  'Space Mono', 'Consolas', monospace;
+}
