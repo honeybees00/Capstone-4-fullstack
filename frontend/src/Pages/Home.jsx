@@ -150,14 +150,6 @@ export default function Home() {
                 Inventory Management System
               </span>
               <div className="flex items-center gap-5">
-                <div className="flex items-end gap-2">
-                  <img src="/bird-logo.svg" alt="Phoenix"
-                    className="h-10 w-16 shrink-0 brightness-0 invert opacity-90" />
-                  <img src="/bird-logo.svg" alt=""
-                    className="h-7 w-11 shrink-0 brightness-0 invert opacity-60" />
-                  <img src="/bird-logo.svg" alt=""
-                    className="h-4 w-7 shrink-0 brightness-0 invert opacity-40" />
-                </div>
                 <div>
                   <h1 className="font-serif text-xl font-bold tracking-wide text-text text-center sm:text-3xl lg:text-4xl"
                     style={{ textShadow: '2px 3px 8px rgba(0,0,0,.7)' }}>
@@ -328,8 +320,6 @@ export default function Home() {
       <footer className="mt-auto border-t border-border bg-surface-card px-2 py-2 sm:px-16 lg:px-28">
         <div className="mx-auto max-w-5xl flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
           <div className="flex items-center gap-3">
-            <img src="/bird-logo.svg" alt="Phoenix"
-              className="h-5 w-8 brightness-0 invert opacity-40" />
             <span className="font-serif text-sm text-text-muted">Phoenix Product Catalog</span>
           </div>
           <p className="font-sans text-xs text-text-muted text-center">
