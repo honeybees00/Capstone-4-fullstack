@@ -140,13 +140,4 @@ POST /webhook/product-bot
 
 ## Environment Variables
 
-Create a `.env` file in `Capstone-4/backend/`:
 
-```
-DB_HOST=your-rds-endpoint.amazonaws.com
-DB_PORT=5432
-DB_NAME=db_christina
-DB_USER=christina
-DB_PASSWORD=your_password
-DB_SSLMODE=require
-```
